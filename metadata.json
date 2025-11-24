@@ -1,0 +1,7 @@
+{
+  "name": "StripeAI Nexus",
+  "description": "A hybrid AI and JSON utility platform integrated with Stripe plan structures. Features Gemini 2.5 Flash for AI logic and deterministic tools for JSON processing, gated by subscription tiers.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
