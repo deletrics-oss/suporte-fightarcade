@@ -1,9 +1,16 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 import { GEMINI_MODEL } from "../constants";
 
-// Initialize the client with the API key from environment variables
-// Per coding guidelines, using process.env.API_KEY directly.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Retrieve the API Key injected by Vite
+const apiKey = process.env.API_KEY;
+
+if (!apiKey) {
+  console.error("CRITICAL ERROR: API Key is missing. Please check your .env file.");
+}
+
+// Initialize the client. Use a fallback empty string to prevent constructor crash 
+// if key is missing (logs will show the real error above).
+const ai = new GoogleGenAI({ apiKey: apiKey || '' });
 
 // Updated Welcome Text with Video Link and Instruction
 export const FIGHT_ARCADE_WELCOME_TEXT = `https://www.fightarcade.com.br/videomanual
