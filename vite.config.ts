@@ -9,10 +9,9 @@ export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     define: {
-      // Polyfill process.env.API_KEY so the geminiService works without changing the code
+      // This string replacement ensures that wherever the code says process.env.API_KEY,
+      // it gets replaced by the actual string value of your key.
       'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
-      // Prevent crash if other libraries try to access process.env
-      'process.env': process.env, 
     },
     server: {
       port: 3039,
