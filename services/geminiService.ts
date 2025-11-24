@@ -1,7 +1,8 @@
 import { GoogleGenAI, Chat } from "@google/genai";
 import { GEMINI_MODEL } from "../constants";
 
-// Initialize the client with the API key from the environment
+// Initialize the client with the API key from environment variables
+// Per coding guidelines, using process.env.API_KEY directly.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 // Updated Welcome Text with Video Link and Instruction
