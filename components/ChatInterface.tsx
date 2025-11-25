@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Bot, User, Loader2, AlertTriangle, RotateCcw, Mic, MicOff, Volume2, VolumeX, PlayCircle } from 'lucide-react';
+import { Send, Bot, User, Loader2, AlertTriangle, RotateCcw, Mic, MicOff, Volume2, VolumeX, PlayCircle, Palette, ExternalLink } from 'lucide-react';
 import { createChatSession, sendMessageStream, FIGHT_ARCADE_WELCOME_TEXT } from '../services/geminiService';
 import { ChatMessage } from '../types';
 import { GenerateContentResponse } from '@google/genai';
@@ -56,8 +56,11 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onEnableAdmin }) => {
   const speakText = (text: string) => {
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel(); // Stop any previous speech
-      // Remove URLs and brackets for cleaner speech
-      const cleanText = text.replace(/https?:\/\/[^\s]+/g, '').replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
+      // Remove URLs, markers and brackets for cleaner speech
+      const cleanText = text
+        .replace(/\[VIDEO_LOCAL\]/g, '')
+        .replace(/https?:\/\/[^\s]+/g, '')
+        .replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1');
       const utterance = new SpeechSynthesisUtterance(cleanText);
       utterance.lang = 'pt-BR'; // Set to Portuguese
       utterance.rate = 1.1; // Slightly faster for better flow
@@ -209,50 +212,105 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onEnableAdmin }) => {
   }, [input, isLoading, onEnableAdmin]);
 
   const renderMessageContent = (text: string) => {
-    // 1. Check for the specific video manual URL to render the card at the top
-    const videoUrl = "https://www.fightarcade.com.br/videomanual";
-    const hasVideo = text.includes(videoUrl);
+    const localVideoMarker = "[VIDEO_LOCAL]";
+    // Check for the Canva link (checking a substring to be safe)
+    const canvaUrlSub = "canva.com/design";
     
-    // Filter the URL out of the visible text if we are showing the card, 
-    // but ONLY if it's that specific video URL, to avoid duplication in the welcome message.
+    // Check for the Manual Video Link (Backup)
+    const videoManualUrl = "https://www.fightarcade.com.br/videomanual";
+    
+    // Find exact full URL if possible to clean nicely, otherwise detection is enough for card
+    // We regex match the full canva link
+    const canvaMatch = text.match(/https:\/\/www\.canva\.com\/design\/[^\s]+/);
+    const canvaUrlFull = canvaMatch ? canvaMatch[0] : null;
+
+    const hasLocalVideo = text.includes(localVideoMarker);
+    const hasManualLink = text.includes(videoManualUrl);
+    const hasCanva = !!canvaUrlFull;
+    
     let displayText = text;
-    if (hasVideo) {
-      displayText = displayText.replace(videoUrl, '').trim();
+    if (hasLocalVideo) {
+      displayText = displayText.replace(localVideoMarker, '').trim();
+    }
+    if (hasCanva && canvaUrlFull) {
+       displayText = displayText.replace(canvaUrlFull, '').trim();
+    }
+    if (hasManualLink) {
+       displayText = displayText.replace(videoManualUrl, '').trim();
     }
 
     // 2. Split text to handle Markdown links [Label](URL) and raw URLs
-    // Regex explanation:
-    // (\[.*?\]\(.*?\)) matches [Label](URL)
-    // (https?:\/\/[^\s]+) matches raw URLs
     const parts = displayText.split(/(\[.*?\]\(.*?\)|https?:\/\/[^\s]+)/g);
 
     return (
       <div className="flex flex-col gap-2">
-        {hasVideo && (
-           <a 
-             href={videoUrl} 
-             target="_blank" 
-             rel="noopener noreferrer"
-             className="block w-full max-w-sm mb-4 group overflow-hidden rounded-xl border border-slate-700 bg-slate-950 relative aspect-video shadow-lg hover:shadow-indigo-500/20 transition-all no-underline"
-           >
-             <div className="absolute inset-0 flex items-center justify-center z-10">
-                <div className="w-14 h-14 bg-red-600 group-hover:bg-red-500 rounded-full flex items-center justify-center shadow-xl transition-transform transform group-hover:scale-110">
-                   <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1"></div>
+        
+        {/* MEDIA CARDS ROW */}
+        <div className="flex flex-wrap gap-4 mb-2">
+            {hasLocalVideo && (
+              <div className="w-full max-w-md rounded-xl overflow-hidden shadow-lg border border-slate-700 bg-black relative group">
+                <video 
+                  controls 
+                  playsInline
+                  controlsList="nodownload" 
+                  className="w-full aspect-video"
+                  title="Manual em Vídeo - Fight Arcade"
+                >
+                  <source src="/manual.mp4" type="video/mp4" />
+                  <div className="absolute inset-0 flex items-center justify-center text-white">
+                      Seu navegador não suporta a reprodução.
+                  </div>
+                </video>
+                <div className="p-3 bg-gradient-to-t from-slate-900 to-slate-800 border-t border-slate-700">
+                    <p className="text-white font-bold text-sm flex items-center gap-2">
+                    <PlayCircle className="w-4 h-4 text-red-500" />
+                    Manual em Vídeo
+                    </p>
+                    <p className="text-slate-400 text-xs pl-6">Fight Arcade (Arquivo Local)</p>
                 </div>
-             </div>
-             {/* Abstract Arcade Background */}
-             <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-slate-800 via-slate-900 to-black opacity-80 group-hover:opacity-60 transition-opacity"></div>
-             
-             {/* Bottom Text Overlay */}
-             <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent">
-                <p className="text-white font-bold text-sm flex items-center gap-2">
-                  <PlayCircle className="w-4 h-4 text-red-500" />
-                  Manual em Vídeo
-                </p>
-                <p className="text-slate-400 text-xs pl-6">Fight Arcade</p>
-             </div>
-           </a>
-        )}
+              </div>
+            )}
+
+            {/* BACKUP LINK CARD */}
+            {hasManualLink && (
+               <a 
+                 href={videoManualUrl}
+                 target="_blank" 
+                 rel="noopener noreferrer"
+                 className="flex flex-col justify-center w-full sm:w-48 bg-slate-800 border border-slate-700 hover:border-indigo-500 hover:bg-slate-700 rounded-xl p-4 transition-all no-underline shadow-md group"
+               >
+                  <div className="flex items-center gap-2 mb-2">
+                     <ExternalLink className="w-5 h-5 text-indigo-400 group-hover:text-indigo-300" />
+                     <span className="text-indigo-200 font-bold text-sm">Link Reserva</span>
+                  </div>
+                  <p className="text-slate-400 text-xs">Se o vídeo acima não carregar, assista online aqui.</p>
+               </a>
+            )}
+
+            {hasCanva && canvaUrlFull && (
+                <a 
+                href={canvaUrlFull}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="block w-full sm:w-64 group overflow-hidden rounded-xl border border-indigo-500/30 bg-indigo-950/20 relative aspect-video shadow-lg hover:shadow-purple-500/20 transition-all no-underline"
+                >
+                <div className="absolute inset-0 flex items-center justify-center z-10">
+                    <div className="w-12 h-12 bg-gradient-to-tr from-purple-600 to-pink-600 group-hover:from-purple-500 group-hover:to-pink-500 rounded-full flex items-center justify-center shadow-xl transition-transform transform group-hover:scale-110">
+                        <Palette className="w-6 h-6 text-white" />
+                    </div>
+                </div>
+                <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_var(--tw-gradient-stops))] from-purple-900/40 via-slate-900 to-slate-950 opacity-80 transition-opacity"></div>
+                <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-indigo-950/90 to-transparent">
+                    <p className="text-white font-bold text-sm flex items-center gap-2">
+                    <Palette className="w-4 h-4 text-pink-400" />
+                    Catálogo de Estampas
+                    </p>
+                    <p className="text-indigo-300 text-xs pl-6">Ver opções online</p>
+                </div>
+                </a>
+            )}
+        </div>
+
         <div className="whitespace-pre-wrap">
           {parts.map((part, index) => {
              // Match Markdown Link [text](url)

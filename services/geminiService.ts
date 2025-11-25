@@ -6,14 +6,42 @@ const apiKey = process.env.API_KEY;
 
 if (!apiKey) {
   console.error("CRITICAL ERROR: API Key is missing. Please check your .env file.");
+} else {
+  // Safe log to confirm key presence without exposing it entirely
+  console.log("API Key loaded successfully:", apiKey.substring(0, 5) + "...");
 }
 
 // Initialize the client. Use a fallback empty string to prevent constructor crash 
 // if key is missing (logs will show the real error above).
 const ai = new GoogleGenAI({ apiKey: apiKey || '' });
 
-// Updated Welcome Text with Video Link and Instruction
-export const FIGHT_ARCADE_WELCOME_TEXT = `https://www.fightarcade.com.br/videomanual
+// Rate Limiting Logic
+const RATE_LIMIT_KEY = 'fight_arcade_rate_limit';
+const MAX_REQUESTS_PER_MINUTE = 10;
+const TIME_WINDOW_MS = 60000; // 1 Minute
+
+const checkRateLimit = () => {
+  const now = Date.now();
+  const rawData = localStorage.getItem(RATE_LIMIT_KEY);
+  let timestamps: number[] = rawData ? JSON.parse(rawData) : [];
+
+  // Filter out timestamps older than the time window
+  timestamps = timestamps.filter(t => now - t < TIME_WINDOW_MS);
+
+  // Check if limit is exceeded
+  if (timestamps.length >= MAX_REQUESTS_PER_MINUTE) {
+    throw new Error(`⚠️ Limite de tráfego atingido. Por favor, aguarde alguns instantes antes de enviar nova mensagem. (Máx: ${MAX_REQUESTS_PER_MINUTE}/min)`);
+  }
+
+  // Add new timestamp
+  timestamps.push(now);
+  localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(timestamps));
+};
+
+// Updated Welcome Text with Local Video Marker, Backup Link, Canva Link, and Instruction
+export const FIGHT_ARCADE_WELCOME_TEXT = `[VIDEO_LOCAL]
+https://www.fightarcade.com.br/videomanual
+https://www.canva.com/design/DAFB8VIBPXU/xyySxdmR19FY8lknZ3gJLg/watch
 
 Caso o seu seja outro modelo, é só acionar o suporte e explicar para a pessoa.
 
@@ -204,6 +232,9 @@ export const createChatSession = (): Chat => {
 
 export const sendMessageStream = async (chat: Chat, message: string) => {
   try {
+    // Perform Rate Limit Check before calling API
+    checkRateLimit();
+
     return await chat.sendMessageStream({ message });
   } catch (error) {
     console.error("Gemini API Error:", error);
