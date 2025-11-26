@@ -52,7 +52,7 @@
 </head>
   <body>
     <div id="root"></div>
-    <!-- FIX: Use relative path './index.tsx' to support any subdirectory deployment -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- FIX: Use absolute path /index.tsx. Vite will automatically prepend the 'base' URL -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
