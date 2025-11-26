@@ -1,10 +1,10 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import process from 'process';
 
 export default defineConfig(({ mode }) => {
   // Load env file from the current working directory.
-  const env = loadEnv(mode, process.cwd(), '');
+  // Using process.cwd() directly as it is global in Node.js environment
+  const env = loadEnv(mode, (process as any).cwd(), '');
 
   return {
     plugins: [react()],

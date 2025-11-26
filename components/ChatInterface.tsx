@@ -239,14 +239,9 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onEnableAdmin }) => {
 
   const renderMessageContent = (text: string) => {
     const localVideoMarker = "[VIDEO_LOCAL]";
-    // Check for the Canva link (checking a substring to be safe)
     const canvaUrlSub = "canva.com/design";
-    
-    // Check for the Manual Video Link (Backup)
     const videoManualUrl = "https://www.fightarcade.com.br/videomanual";
     
-    // Find exact full URL if possible to clean nicely, otherwise detection is enough for card
-    // We regex match the full canva link
     const canvaMatch = text.match(/https:\/\/www\.canva\.com\/design\/[^\s]+/);
     const canvaUrlFull = canvaMatch ? canvaMatch[0] : null;
 
@@ -278,11 +273,13 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onEnableAdmin }) => {
                 <video 
                   controls 
                   playsInline
+                  preload="metadata"
                   controlsList="nodownload" 
-                  className="w-full aspect-video"
+                  className="w-full aspect-video bg-black"
                   title="Manual em Vídeo - Fight Arcade"
                 >
-                  <source src="/manual.mp4" type="video/mp4" />
+                  {/* FIX: Use relative path './manual.mp4' instead of absolute '/manual.mp4' */}
+                  <source src="./manual.mp4" type="video/mp4" />
                   <div className="absolute inset-0 flex items-center justify-center text-white">
                       Seu navegador não suporta a reprodução.
                   </div>
