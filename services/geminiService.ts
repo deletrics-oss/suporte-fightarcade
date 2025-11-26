@@ -50,11 +50,12 @@ Visite nosso site: https://www.fightarcade.com.br
 
 Para começarmos, me diga o que você gostaria de fazer:
 
-1️⃣ - Ver modelos e preços
+1️⃣ - Ver modelos de Fliperama e Controles
 2️⃣ - Ver opções de estampas
 3️⃣ - Suporte Técnico
 4️⃣ - Finalizar compra
-5️⃣ - Falar com um atendente`;
+5️⃣ - Falar com um atendente
+6️⃣ - Placas e Componentes (Novo)`;
 
 const FIGHT_ARCADE_KNOWLEDGE = {
   "menu_principal_texto": FIGHT_ARCADE_WELCOME_TEXT,
@@ -140,6 +141,36 @@ const FIGHT_ARCADE_KNOWLEDGE = {
       "keywords": ["5", "atendente", "falar com alguem", "humano", "falar com atendente"],
       "reply": "Nossos especialistas já foram notificados e logo irão te responder nos WhatsApps:\n\n📱 [(11) 97898-4413](https://wa.me/5511978984413)\n📱 [(11) 98812-1976](https://wa.me/5511988121976)\n\nℹ️ *Nota Importante:* Os controles só podem ser alterados **dentro dos jogos** e não fora, pois é uma configuração geral.\n\n*O assistente virtual será pausado para não atrapalhar a conversa.* Para reativá-lo a qualquer momento, basta digitar *0*. 🙂",
       "pause_bot_after_reply": true
+    },
+    {
+      "keywords": ["6", "placas", "componentes", "peças", "hardware"],
+      "reply": "🛠️ *Menu de Placas e Componentes*\n\nSelecione o item para ver detalhes técnicos:\n\n*PL1* - Placa Pico Mini (RP2040) - Zero Delay\n*PL2* - Game Stick 4K Retro (+11.000 Jogos)\n*PL3* - Placa Óptica para Comando Sanwa\n*PL4* - Placa 324U Zero Delay (Arduino)\n*PL5* - Placa Wireless Fight Arcade\n\nDigite o código (ex: *PL1*) para ver as especificações.",
+      "pause_bot_after_reply": false
+    },
+    {
+      "keywords": ["pl1", "pico", "rp2040", "picomini"],
+      "reply": "⚡ **Placa Pico Mini (RP2040)**\n\nVersão miniaturizada da placa Pico original. Projetada para latência ultra-baixa (sub-1ms) e performance de torneio.\n\n📄 **Especificações:**\n- Firmware: GP2040-CE\n- Latência: < 1 ms\n- Conexão: USB-C\n- Compatível com: PC, PS3, PS4 (Legacy), Switch, Android, Steam Deck.\n\n🎮 **Comandos de Atalho (Segurar ao plugar):**\n- Start (S2): Nintendo Switch\n- B3 (X): PC (XInput)\n- L1: PS3\n- B1: PS4 Legacy\n\n🔗 Mais detalhes: https://fightarcade.com.br/picomini/\n\nDigite *6* para voltar ao menu de placas ou *0* para o menu principal.",
+      "pause_bot_after_reply": false
+    },
+    {
+      "keywords": ["pl2", "stick", "gamestick", "4k"],
+      "reply": "🕹️ **Game Stick 4K Retro**\n\nConsole portátil HDMI Plug and Play com mais de 11.000 jogos clássicos e 2 controles sem fio.\n\n📄 **Sistemas:**\nArcade, Neo Geo, Capcom, SNES, Mega Drive, PS1, Game Boy, Atari e mais.\n\n⚙️ **Instalação:**\n1. Conecte na HDMI da TV.\n2. Ligue o USB na força.\n3. Conecte o receptor dos controles.\n\n🔗 Comprar: https://fightarcade.com.br/gamestick/\n\nDigite *6* para voltar ao menu de placas ou *0* para o menu principal.",
+      "pause_bot_after_reply": false
+    },
+    {
+      "keywords": ["pl3", "sanwa", "optica", "optico", "sensor"],
+      "reply": "🎯 **Placa Óptica para Comando Sanwa**\n\nSubstitui os microswitches mecânicos por sensores infravermelhos. Elimina o 'clique' e o desgaste físico.\n\n📄 **Destaques:**\n- Resposta instantânea (<1ms)\n- Durabilidade ilimitada (sem contato físico)\n- Ajuste de sensibilidade via trimpot\n- Instalação via cabo flat 5 vias (necessita 5V)\n\n🔗 Detalhes: https://fightarcade.com.br/sanwa/\n\nDigite *6* para voltar ao menu de placas ou *0* para o menu principal.",
+      "pause_bot_after_reply": false
+    },
+    {
+      "keywords": ["pl4", "324u", "arduino", "leonardo"],
+      "reply": "🔧 **Placa 324U Zero Delay (Arduino Leonardo)**\n\nControladora baseada no chipset ATmega32U4. Ideal para projetos customizados com muitos botões.\n\n📄 **Especificações:**\n- Suporta até 20 botões + direcional\n- Protocolo USB HID Nativo\n- Compatível com PC, Raspberry Pi, PS3\n\n🔗 Detalhes: https://fightarcade.com.br/zero324/\n\nDigite *6* para voltar ao menu de placas ou *0* para o menu principal.",
+      "pause_bot_after_reply": false
+    },
+    {
+      "keywords": ["pl5", "wireless", "sem fio", "bluetooth"],
+      "reply": "📡 **Placa Wireless Fight Arcade**\n\nSolução para montar controles arcade sem fio com bateria recarregável.\n\n📄 **Specs:**\n- Conexão: Bluetooth e Wireless 2.4GHz\n- Entrada para bateria Lítio/Li-po\n- Latência otimizada para jogos de luta\n\n🔗 Detalhes: https://fightarcade.com.br/wire/\n\nDigite *6* para voltar ao menu de placas ou *0* para o menu principal.",
+      "pause_bot_after_reply": false
     },
     {
       "keywords": ["c1", "comprar online"],

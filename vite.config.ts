@@ -8,6 +8,8 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
+    // Base URL is critical for subdirectory hosting
+    base: '/suporte-fightarcade/',
     define: {
       // FIX 1: Point to VITE_GEMINI_API_KEY because that is what is in your .env file
       // FIX 2: We use specific assignment. We REMOVED 'process.env': {} to avoid overwriting this key.

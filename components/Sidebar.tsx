@@ -14,8 +14,8 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ currentView, currentPlan, isAdmin, onNavigate, onOpenPricing }) => {
   const [showQr, setShowQr] = useState(false);
   const planConfig = PLANS[currentPlan];
-  // Updated to the specific server IP requested
-  const qrUrl = "http://72.60.246.250:3039/";
+  // Updated to the specific HTTPS domain
+  const qrUrl = "https://chatbotfc.shop/suporte-fightarcade/";
 
   return (
     <>
