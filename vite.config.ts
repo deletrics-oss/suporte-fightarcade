@@ -19,6 +19,8 @@ export default defineConfig(({ mode }) => {
       port: 3039,
       strictPort: true,
       host: true, // Exposes the server to the network (0.0.0.0)
+      // Allow specific domains to access the dev server
+      allowedHosts: ['chatbotfc.shop', 'www.chatbotfc.shop', '72.60.246.250', 'localhost']
     }
   };
 });
