@@ -7,8 +7,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    // 1. EXPLICIT BASE: Essential for serving under a subpath behind a proxy
-    base: '/suporte-fightarcade/', 
+    // CRITICAL FIX: Use relative base './' to prevent Redirect Loops and MIME type errors
+    // when served behind Nginx/Cloudflare in a subdirectory.
+    base: './', 
     
     define: {
       // Inject API Key securely
@@ -17,14 +18,13 @@ export default defineConfig(({ mode }) => {
     server: {
       port: 3039,
       strictPort: true,
-      host: '0.0.0.0', 
-      allowedHosts: true, // Allow all hosts
+      host: '0.0.0.0',
+      // Allow the specific domain
+      allowedHosts: ['chatbotfc.shop'], 
       
-      // 2. SSL/PROXY CONFIGURATION (SIMPLIFIED):
-      // Only clientPort is strictly necessary for Nginx reverse proxy SSL.
-      // Setting host/path manually often causes redirect loops.
+      // SSL/Proxy Configuration
       hmr: {
-        clientPort: 443, // Forces browser to use WSS (Secure WebSocket)
+        clientPort: 443, // Forces WSS connection for SSL
       }
     }
   };
