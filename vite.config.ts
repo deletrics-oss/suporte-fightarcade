@@ -18,15 +18,13 @@ export default defineConfig(({ mode }) => {
       port: 3039,
       strictPort: true,
       host: '0.0.0.0', 
-      allowedHosts: true, // Allow all hosts (including chatbotfc.shop)
+      allowedHosts: true, // Allow all hosts
       
-      // 2. SSL/PROXY CONFIGURATION:
-      // This tells the browser to connect to the WebSocket via the secure public domain
+      // 2. SSL/PROXY CONFIGURATION (SIMPLIFIED):
+      // Only clientPort is strictly necessary for Nginx reverse proxy SSL.
+      // Setting host/path manually often causes redirect loops.
       hmr: {
-        protocol: 'wss', // Force Secure WebSocket
-        host: 'chatbotfc.shop', // The public domain
-        clientPort: 443, // The public SSL port
-        path: '/suporte-fightarcade/', // Match the base path context
+        clientPort: 443, // Forces browser to use WSS (Secure WebSocket)
       }
     }
   };
