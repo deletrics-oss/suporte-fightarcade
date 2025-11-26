@@ -53,7 +53,7 @@
 </head>
   <body>
     <div id="root"></div>
-    <!-- FIX: Changed src="/index.tsx" to src="./index.tsx" to work in subdirectory -->
-    <script type="module" src="./index.tsx"></script>
+    <!-- FIX: Use root path. Vite's 'base' config will automatically prepend /suporte-fightarcade/ -->
+    <script type="module" src="/index.tsx"></script>
   </body>
 </html>
