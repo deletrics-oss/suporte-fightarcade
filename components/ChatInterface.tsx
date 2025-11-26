@@ -77,11 +77,24 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onEnableAdmin }) => {
   };
 
   const handleMicClick = () => {
+    // 1. Check for HTTPS (Required for mobile Mic)
+    if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost') {
+      alert("⚠️ O microfone requer conexão segura (HTTPS). Por favor, acesse o site via https://");
+      return;
+    }
+
+    // 2. Check for iOS (Apple limits Web Speech API)
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !(window as any).MSStream;
+    if (isIOS) {
+      alert("⚠️ Em dispositivos Apple (iOS), o reconhecimento de voz via navegador pode ser bloqueado pelo sistema. Tente usar o ditado do próprio teclado.");
+      // We don't return here, we try anyway, but the warning is important.
+    }
+
     const windowObj = window as unknown as IWindow;
     const SpeechRecognition = windowObj.SpeechRecognition || windowObj.webkitSpeechRecognition;
 
     if (!SpeechRecognition) {
-      alert("Seu navegador não suporta reconhecimento de voz.");
+      alert("Seu navegador não suporta reconhecimento de voz nativo.");
       return;
     }
 
@@ -91,27 +104,40 @@ const ChatInterface: React.FC<ChatInterfaceProps> = ({ onEnableAdmin }) => {
       return;
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'pt-BR';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
+    try {
+      const recognition = new SpeechRecognition();
+      recognition.lang = 'pt-BR';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
 
-    recognition.onstart = () => setIsListening(true);
-    
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setInput(transcript);
-    };
+      recognition.onstart = () => setIsListening(true);
+      
+      recognition.onresult = (event: any) => {
+        const transcript = event.results[0][0].transcript;
+        setInput(transcript);
+      };
 
-    recognition.onerror = (event: any) => {
-      console.error("Speech recognition error", event.error);
+      recognition.onerror = (event: any) => {
+        console.error("Speech recognition error", event.error);
+        setIsListening(false);
+        if (event.error === 'not-allowed') {
+          alert("Acesso ao microfone negado. Verifique as permissões do seu navegador.");
+        } else if (event.error === 'no-speech') {
+          // Silent fail or small toast
+        } else {
+          alert(`Erro no microfone: ${event.error}`);
+        }
+      };
+
+      recognition.onend = () => setIsListening(false);
+
+      recognitionRef.current = recognition;
+      recognition.start();
+    } catch (e) {
+      console.error(e);
+      alert("Erro ao iniciar microfone.");
       setIsListening(false);
-    };
-
-    recognition.onend = () => setIsListening(false);
-
-    recognitionRef.current = recognition;
-    recognition.start();
+    }
   };
 
   const handleReset = useCallback(() => {
