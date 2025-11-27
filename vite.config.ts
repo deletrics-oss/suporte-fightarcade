@@ -7,9 +7,9 @@ export default defineConfig(({ mode }) => {
 
   return {
     plugins: [react()],
-    // 1. ABSOLUTE BASE: This is the most stable config for Nginx subdirectories.
-    // It forces all assets to load from /suporte-fightarcade/...
-    base: '/suporte-fightarcade/', 
+    // 1. RELATIVE BASE: The "Silver Bullet" for subdirectory proxies.
+    // using './' prevents the redirect loops caused by absolute paths.
+    base: './', 
     
     define: {
       // Inject API Key securely
@@ -19,12 +19,12 @@ export default defineConfig(({ mode }) => {
       port: 3039,
       strictPort: true,
       host: '0.0.0.0',
-      cors: true, // Enable CORS to prevent blocking assets
-      allowedHosts: true, // Allow any host (chatbotfc.shop, IPs, etc)
+      cors: true, // Enable CORS
+      allowedHosts: true, // Allow all hosts (chatbotfc.shop, IPs, etc)
       
       // 2. SSL/PROXY CONFIGURATION:
-      // We tell Vite that the client sees port 443 (HTTPS), 
-      // even though the server runs on 3039 (HTTP).
+      // We only specify clientPort to ensure WSS (Secure WebSockets) works.
+      // We do NOT set host/path manually to avoid conflicts.
       hmr: {
         clientPort: 443,
       }
